@@ -72,3 +72,14 @@ func LCM[T constraints.Integer](vs ...T) T {
 
 	return result
 }
+
+func Sign[T Number](v T) int {
+	switch {
+	case v < 0:
+		return -1
+	case v == 0:
+		return 0
+	default:
+		return 1
+	}
+}
