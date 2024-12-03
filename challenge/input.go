@@ -2,6 +2,7 @@ package challenge
 
 import (
 	"bufio"
+	"bytes"
 	"io"
 	"iter"
 	"os"
@@ -35,6 +36,12 @@ func InputFile() io.Reader {
 	return r
 }
 
+func Raw(r io.Reader) string {
+	var buf bytes.Buffer
+	_, _ = io.Copy(&buf, r)
+	return buf.String()
+}
+
 // Lines returns an iter.Seq[string] over all lines in the provided io.Reader.
 func Lines(r io.Reader) iter.Seq[string] {
 	scanner := bufio.NewScanner(r)
@@ -52,11 +59,27 @@ func Lines(r io.Reader) iter.Seq[string] {
 	}
 }
 
-// Sections returns an iter.Seq[string] over all blocks of lines in the provided io.Reader. Blocks of lines have at
-// least one extra newline separating them.
-func Sections(r io.Reader) iter.Seq[string] {
+func SectionsOf(r io.Reader, delim string) iter.Seq[string] {
 	scanner := bufio.NewScanner(r)
-	var section strings.Builder
+	scanner.Split(func(data []byte, atEOF bool) (int, []byte, error) {
+		// Based off of bufio.ScanLines https://cs.opensource.google/go/go/+/refs/tags/go1.23.3:src/bufio/scan.go;l=355
+		if atEOF && len(data) == 0 {
+			return 0, nil, nil
+		}
+
+		if i := strings.Index(string(data), delim); i >= 0 {
+			// We have a full delim-terminated section.
+			return i + len(delim), data[0:i], nil
+		}
+
+		// If we're at EOF, we have a final, non-terminated section. Return it.
+		if atEOF {
+			return len(data), data, nil
+		}
+
+		// Request more data.
+		return 0, nil, nil
+	})
 
 	return func(yield func(string) bool) {
 		for scanner.Scan() {
@@ -64,23 +87,29 @@ func Sections(r io.Reader) iter.Seq[string] {
 				panic(err)
 			}
 
-			line := scanner.Text()
-			section.WriteString(line)
+			tok := scanner.Text()
+			if tok == "" {
+				continue
+			}
 
-			if line == "" {
-				if !yield(strings.TrimSpace(section.String())) {
-					return
-				}
-				section.Reset()
-			} else {
-				section.WriteRune('\n')
+			if !yield(tok) {
+				return
 			}
 		}
+	}
+}
 
-		if section.Len() != 0 {
-			yield(section.String())
+// Sections returns an iter.Seq[string] over all blocks of lines in the provided io.Reader. Blocks of lines have at
+// least one extra newline separating them.
+func Sections(r io.Reader) iter.Seq[string] {
+	return func(yield func(string) bool) {
+		for section := range SectionsOf(r, "\n\n") {
+			if !yield(strings.TrimSpace(section)) {
+				return
+			}
 		}
 	}
+
 }
 
 // Ints returns an iter.Seq[int] over all lines in the provided io.Reader, converting each line to an int. This method
