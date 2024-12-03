@@ -2,7 +2,6 @@ package challenge
 
 import (
 	"bufio"
-	"bytes"
 	"io"
 	"iter"
 	"os"
@@ -36,8 +35,9 @@ func InputFile() io.Reader {
 	return r
 }
 
+// Raw returns the contents of the provided io.Reader as one giant string
 func Raw(r io.Reader) string {
-	var buf bytes.Buffer
+	var buf strings.Builder
 	_, _ = io.Copy(&buf, r)
 	return buf.String()
 }
@@ -59,6 +59,8 @@ func Lines(r io.Reader) iter.Seq[string] {
 	}
 }
 
+// SectionsOf returns sections of input from the provided io.Reader delimited by the provided string, exclusive. The
+// header up to the first delimiter is returned as the first element in the sequence. Empty sections are omitted.
 func SectionsOf(r io.Reader, delim string) iter.Seq[string] {
 	scanner := bufio.NewScanner(r)
 	scanner.Split(func(data []byte, atEOF bool) (int, []byte, error) {
@@ -99,8 +101,8 @@ func SectionsOf(r io.Reader, delim string) iter.Seq[string] {
 	}
 }
 
-// Sections returns an iter.Seq[string] over all blocks of lines in the provided io.Reader. Blocks of lines have at
-// least one extra newline separating them.
+// Sections returns an iter.Seq[string] over all blocks of lines in the provided io.Reader. Blocks are delimited by two
+// newlines, and the resulting section has leading and trailing whitespace trimmed by strings.TrimSpace
 func Sections(r io.Reader) iter.Seq[string] {
 	return func(yield func(string) bool) {
 		for section := range SectionsOf(r, "\n\n") {
