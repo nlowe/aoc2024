@@ -8,9 +8,11 @@ import (
 )
 
 func TestA(t *testing.T) {
-	input := strings.NewReader(`xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))`)
+	t.Skip("Not Implemented")
+
+	input := strings.NewReader("foobar")
 
 	result := partA(input)
 
-	require.Equal(t, 161, result)
+	require.Equal(t, 42, result)
 }

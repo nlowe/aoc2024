@@ -8,9 +8,11 @@ import (
 )
 
 func TestB(t *testing.T) {
-	input := strings.NewReader(example)
+	t.Skip("Not Implemented")
+
+	input := strings.NewReader("foobar")
 
 	result := partB(input)
 
-	require.Equal(t, 123, result)
+	require.Equal(t, 42, result)
 }

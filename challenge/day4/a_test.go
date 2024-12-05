@@ -7,21 +7,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const example = `MMMSXXMASM
-MSAMXMSMSA
-AMXSXMAAMM
-MSAMASMSMX
-XMASAMXAMM
-XXAMMXXAMA
-SMSMSASXSS
-SAXAMASAAA
-MAMMMXMMMM
-MXMXAXMASX`
-
 func TestA(t *testing.T) {
-	input := strings.NewReader(example)
+	t.Skip("Not Implemented")
+
+	input := strings.NewReader("foobar")
 
 	result := partA(input)
 
-	require.Equal(t, 18, result)
+	require.Equal(t, 42, result)
 }

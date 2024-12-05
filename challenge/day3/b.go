@@ -3,7 +3,6 @@ package day3
 import (
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -21,16 +20,5 @@ func bCommand() *cobra.Command {
 }
 
 func partB(input io.Reader) int {
-	var result int
-
-	// Split by "do()" to find sections where mul is enabled, which works because it is enabled for the first section
-	for section := range challenge.SectionsOf(input, "do()") {
-		// Split by "don't()" and discard the right half as those instructions are disabled until the next section
-		check, _, _ := strings.Cut(section, "don't()")
-
-		// Treat the left half as another input for partA to solve
-		result += partA(strings.NewReader(check))
-	}
-
-	return result
+	panic("Not implemented!")
 }
