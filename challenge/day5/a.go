@@ -3,6 +3,7 @@ package day5
 import (
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -27,31 +28,29 @@ func partA(input io.Reader) int {
 
 	var result int
 	for _, update := range strings.Split(strings.TrimSpace(updateList), "\n") {
-		if middle, ok := ordered(rules, update); ok {
-			result += middle
+		pages := strings.Split(update, ",")
+		if slices.IsSortedFunc(pages, sortFunc(rules)) {
+			result += util.MustAtoI(pages[len(pages)/2])
 		}
 	}
 
 	return result
 }
 
-func ordered(rules map[int]map[int]struct{}, update string) (int, bool) {
-	pages := strings.Split(update, ",")
+func sortFunc(rules map[int]map[int]struct{}) func(x, y string) int {
+	return func(x, y string) int {
+		xx, yy := util.MustAtoI(x), util.MustAtoI(y)
 
-	for i, page := range pages {
-		v := util.MustAtoI(page)
-
-		for j := i + 1; j < len(pages); j++ {
-			vv := util.MustAtoI(pages[j])
-
-			// Found a later page that should have come before it
-			if _, ok := rules[vv][v]; ok {
-				return 0, false
-			}
+		if _, ok := rules[xx][yy]; ok {
+			return -1
 		}
-	}
 
-	return util.MustAtoI(pages[len(pages)/2]), true
+		if _, ok := rules[yy][xx]; !ok {
+			return 1
+		}
+
+		return 0
+	}
 }
 
 func parseRules(section string) map[int]map[int]struct{} {

@@ -28,26 +28,16 @@ func partB(input io.Reader) int {
 
 	var result int
 	for _, update := range strings.Split(strings.TrimSpace(updateList), "\n") {
-		if _, ok := ordered(rules, update); ok {
+		pages := strings.Split(update, ",")
+		sortedPages := strings.Split(update, ",")
+		slices.SortStableFunc(sortedPages, sortFunc(rules))
+
+		// Skip anything that didn't get re-ordered
+		if slices.Equal(pages, sortedPages) {
 			continue
 		}
 
-		pages := strings.Split(update, ",")
-		slices.SortFunc(pages, func(x, y string) int {
-			xx, yy := util.MustAtoI(x), util.MustAtoI(y)
-
-			if _, ok := rules[xx][yy]; ok {
-				return -1
-			}
-
-			if _, ok := rules[yy][xx]; !ok {
-				return 1
-			}
-
-			return 0
-		})
-
-		result += util.MustAtoI(pages[len(pages)/2])
+		result += util.MustAtoI(sortedPages[len(sortedPages)/2])
 	}
 
 	return result
