@@ -11,11 +11,20 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/nlowe/aoc2024/challenge/day1"
+	"github.com/nlowe/aoc2024/challenge/day10"
+	"github.com/nlowe/aoc2024/challenge/day11"
+	"github.com/nlowe/aoc2024/challenge/day12"
+	"github.com/nlowe/aoc2024/challenge/day13"
+	"github.com/nlowe/aoc2024/challenge/day14"
+	"github.com/nlowe/aoc2024/challenge/day15"
 	"github.com/nlowe/aoc2024/challenge/day2"
 	"github.com/nlowe/aoc2024/challenge/day3"
 	"github.com/nlowe/aoc2024/challenge/day4"
 	"github.com/nlowe/aoc2024/challenge/day5"
 	"github.com/nlowe/aoc2024/challenge/day6"
+	"github.com/nlowe/aoc2024/challenge/day7"
+	"github.com/nlowe/aoc2024/challenge/day8"
+	"github.com/nlowe/aoc2024/challenge/day9"
 	"github.com/nlowe/aoc2024/challenge/example"
 )
 
@@ -27,6 +36,15 @@ func addDays(root *cobra.Command) {
 	day4.AddCommandsTo(root)
 	day5.AddCommandsTo(root)
 	day6.AddCommandsTo(root)
+	day7.AddCommandsTo(root)
+	day8.AddCommandsTo(root)
+	day9.AddCommandsTo(root)
+	day10.AddCommandsTo(root)
+	day11.AddCommandsTo(root)
+	day12.AddCommandsTo(root)
+	day13.AddCommandsTo(root)
+	day14.AddCommandsTo(root)
+	day15.AddCommandsTo(root)
 }
 
 type prof interface {
