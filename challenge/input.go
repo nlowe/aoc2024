@@ -131,3 +131,13 @@ func Ints(r io.Reader) iter.Seq[int] {
 		}
 	}
 }
+
+func Fields[T any](line string, via func(s string) T) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, f := range strings.Fields(line) {
+			if !yield(via(f)) {
+				return
+			}
+		}
+	}
+}
